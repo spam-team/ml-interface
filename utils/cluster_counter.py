@@ -37,7 +37,7 @@ class SegmentCounter:
 
     def get_centroids(self, segment_mask: np.array) -> Tuple[np.array, int]:
         points = self._get_mask_points(segment_mask)
-        animal_count = self.get_animal_count(points)
+        animal_count = self.get_animal_count(segment_mask)
 
         niter = 3
         verbose = False
