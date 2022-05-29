@@ -1,6 +1,7 @@
 import torch
 import segmentation_models_pytorch as smp
 import albumentations as albu
+from pathlib import Path
 
 
 ENCODER = 'se_resnext50_32x4d'
@@ -79,6 +80,9 @@ def get_preprocessing():
         albu.Lambda(image=to_tensor, mask=to_tensor),
     ]
     return albu.Compose(_transform)
+
+
+ROOT = Path(__file__).root
 
 
 def get_model():

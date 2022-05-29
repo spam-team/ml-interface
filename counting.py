@@ -32,15 +32,3 @@ def walruses_count_by_click(img: np.array, centroids: np.array, x: float, y: flo
         return 0
 
     return dbscan.labels_[dbscan.labels_ == point_label].shape[0]
-
-
-if __name__ == '__main__':
-    import cv2
-    import matplotlib.pyplot as plt
-
-    img = cv2.imread('./examples/268.jpg')
-    mask, count = get_walrus_count(img)
-
-    plt.title(f'{count} моржей найдено')
-    plt.imshow(mask)
-    plt.show()

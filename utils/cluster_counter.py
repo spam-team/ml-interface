@@ -6,7 +6,7 @@ from sklearn.cluster import DBSCAN
 from typing import Tuple
 
 
-count_resolver = joblib.load('./models/random_forest_counter.joblib')
+count_resolver = joblib.load('../models/random_forest_counter.joblib')
 
 
 class SegmentCounter:
