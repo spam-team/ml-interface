@@ -30,6 +30,7 @@ print(animal_count)
 ## Принцип работы
 
 Работа разделяется на три этапа:
+
 <img src="./figures/pipeline.png">
 
 
