@@ -6,10 +6,9 @@ import albumentations as albu
 ENCODER = 'se_resnext50_32x4d'
 ENCODER_WEIGHTS = 'imagenet'
 CLASSES = ['walrus']
-ACTIVATION = 'sigmoid' # could be None for logits or 'softmax2d' for multiclass segmentation
+ACTIVATION = 'sigmoid'
 DEVICE = 'cpu'
 
-# create segmentation model with pretrained encoder
 model = smp.Unet(
     encoder_name=ENCODER,
     encoder_weights=ENCODER_WEIGHTS,
@@ -21,6 +20,7 @@ preprocessing_fn = smp.encoders.get_preprocessing_fn(ENCODER, ENCODER_WEIGHTS)
 
 
 def get_training_augmentation():
+    """ Аугментация изображений """
     train_transform = [
 
         albu.HorizontalFlip(p=0.5),
@@ -59,7 +59,7 @@ def get_training_augmentation():
 
 
 def get_validation_augmentation():
-    """Add paddings to make image shape divisible by 32"""
+    """Нужно чтобы размеры делились на 36"""
     test_transform = [
         albu.PadIfNeeded(384, 480)
     ]
@@ -71,7 +71,7 @@ def to_tensor(x, **kwargs):
 
 
 def get_preprocessing():
-    """Construct preprocessing transform
+    """ Построение пайплайна препроцессинга
     """
 
     _transform = [

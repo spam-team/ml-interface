@@ -9,6 +9,9 @@ preprocessing = get_preprocessing()
 
 
 def segment_walruses(img: np.array, device='cpu') -> np.array:
+    """ Сегментация моржей с помощью модели resnet18 + unet
+    Разбиваем на участки 384, 480 и для каждого производим сегментацию.
+    """
     image = preprocessing(image=img)['image']
 
     output_mask = np.zeros(image.shape[1:])

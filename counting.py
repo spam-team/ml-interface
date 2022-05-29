@@ -8,6 +8,7 @@ from utils.cluster_counter import SegmentCounter
 
 
 def get_walrus_count(img: np.array) -> Tuple[np.array, int]:
+    """ Расчет количества моржей по фотографии """
     counter = SegmentCounter()
 
     mask = segment_walruses(img)
@@ -17,6 +18,7 @@ def get_walrus_count(img: np.array) -> Tuple[np.array, int]:
 
 
 def walruses_count_by_click(img: np.array, centroids: np.array, x: float, y: float):
+    """ Расчет количества моржей рядом с определенной точкой """
     x = x * SegmentCounter.DEFAULT_SIZE[0] / img.shape[1]
     y = y * SegmentCounter.DEFAULT_SIZE[1] / img.shape[0]
     cluster_centers = np.array(list(centroids) + [[x, y]])

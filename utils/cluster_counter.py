@@ -1,5 +1,4 @@
-import math
-
+import joblib
 import faiss
 import numpy as np
 from sklearn.cluster import DBSCAN
@@ -7,7 +6,17 @@ from sklearn.cluster import DBSCAN
 from typing import Tuple
 
 
+count_resolver = joblib.load('./models/random_forest_counter.joblib')
+
+
 class SegmentCounter:
+    """ Класс-помощник для работы с кластерами.
+    Уменьшаем входное изображение, чтобы ускорить время работы алгоритмов кластерого анализа.
+    Гипотеза заключается в том, что моржи с большой высоты имеют одинаковую площадь в изображениях,
+    поэтому производится поиск медианного размера кластера, а затем высчитывается количество моржей
+    как отношение общей площади к медианной.
+    Далее производится кластерное разбиение на найденное количество моржей.
+    """
     DEFAULT_SIZE = (1090, 920)
 
     def _get_mask_points(self, mask: np.array) -> np.array:
@@ -20,19 +29,25 @@ class SegmentCounter:
 
         return points
 
+    def _get_animal_count_by_cluster(self, cluster_counts: np.array) -> int:
+        features = [cluster_counts.std(), cluster_counts.mean(), np.median(cluster_counts), cluster_counts.sum(), len(cluster_counts)]
+        delimeter = count_resolver.predict([features])[0]
+
+        return int(sum(cluster_counts) / delimeter)
+
     def _get_count_by_area(self, points: np.array) -> int:
         dbscan = DBSCAN(eps=1)
         dbscan.fit(points)
 
-        counts = np.unique(dbscan.labels_, return_counts=True)[1]
-        m_count = np.median(counts)
-        count = math.ceil(len(points) / m_count)
+        cluster_counts = np.unique(dbscan.labels_, return_counts=True)[1]
+        animal_count = self._get_animal_count_by_cluster(cluster_counts)
 
-        return count
+        return animal_count
 
     def get_animal_count(self, segment_mask: np.array) -> int:
         points = self._get_mask_points(segment_mask)
         count = self._get_count_by_area(points)
+
         return count
 
     def get_centroids(self, segment_mask: np.array) -> Tuple[np.array, int]:
@@ -43,6 +58,6 @@ class SegmentCounter:
         verbose = False
         d = points.shape[1]
         kmeans = faiss.Kmeans(d, animal_count, niter=niter, verbose=verbose, gpu=False)
-        kmeans.train(points.astype('float32'))
+        kmeans.train(points)
 
         return kmeans.centroids
