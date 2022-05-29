@@ -16,7 +16,7 @@ def get_walrus_count(img: np.array) -> Tuple[np.array, int]:
     return mask, count
 
 
-def walrus_count(img: np.array, centroids: np.array, x: float, y: float):
+def walruses_count_by_click(img: np.array, centroids: np.array, x: float, y: float):
     x = x * SegmentCounter.DEFAULT_SIZE[0] / img.shape[1]
     y = y * SegmentCounter.DEFAULT_SIZE[1] / img.shape[0]
     cluster_centers = np.array(list(centroids) + [[x, y]])
@@ -25,7 +25,7 @@ def walrus_count(img: np.array, centroids: np.array, x: float, y: float):
     dbscan.fit(cluster_centers)
 
     point_label = dbscan.labels_[-1]
-    
+
     if point_label == -1:
         return 0
 
@@ -36,9 +36,9 @@ if __name__ == '__main__':
     import cv2
     import matplotlib.pyplot as plt
 
-    img = cv2.imread('./examples/morz.jpeg')
-
+    img = cv2.imread('./examples/268.jpg')
     mask, count = get_walrus_count(img)
+
     plt.title(f'{count} моржей найдено')
     plt.imshow(mask)
     plt.show()
